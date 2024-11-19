@@ -15,6 +15,9 @@ gem "activeadmin", "~> 3.0"
 
 gem "sassc-rails", "~> 2.1"
 
+gem "kaminari"
+
+
 
 gem "puma", ">= 5.0"
 # Use JavaScript with ESM import maps [https://github.com/rails/importmap-rails]
