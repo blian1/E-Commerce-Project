@@ -1,4 +1,9 @@
 Rails.application.routes.draw do
+  get "products/index"
+  get "pages/show"
+  devise_for :admin_users, ActiveAdmin::Devise.config
+  ActiveAdmin.routes(self)
+  devise_for :users
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
@@ -11,4 +16,10 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+  root "products#index"
+  get "/pages/:title", to: "pages#show", as: :page
+  resources :products, only: [ :index, :show ]
+  direct :rails_blob do |blob|
+    "#{blob.service_url}"
+  end
 end
