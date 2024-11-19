@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  get "pages/show"
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   devise_for :users
@@ -14,4 +15,6 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
   # root "posts#index"
+
+  get "/pages/:title", to: "pages#show", as: :page
 end

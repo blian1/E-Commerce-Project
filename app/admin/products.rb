@@ -1,5 +1,5 @@
 ActiveAdmin.register Product do
-  permit_params :name, :description, :price, :stock_quantity, :category, images: [], remove_images: []
+  permit_params :name, :description, :price, :stock_quantity, :category_id, images: [], remove_images: []
 
   config.filters = true
 
@@ -26,7 +26,7 @@ ActiveAdmin.register Product do
       f.input :description
       f.input :price
       f.input :stock_quantity
-      f.input :category
+      f.input :category, as: :select, collection: Category.all.map { |c| [ c.name, c.id ] }, include_blank: "Select a Category"
     end
 
     # Display existing images
@@ -63,7 +63,6 @@ ActiveAdmin.register Product do
 
     f.actions
   end
-
   show do
     attributes_table do
       row :name

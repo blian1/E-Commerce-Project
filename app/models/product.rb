@@ -4,8 +4,9 @@ class Product < ApplicationRecord
   end
 
   def self.ransackable_associations(auth_object = nil)
-    []
+    %w[category images_attachments images_blobs]
   end
+
 
   # allow upload many images for one product
   has_many_attached :images
@@ -14,4 +15,7 @@ class Product < ApplicationRecord
   validates :name, presence: true
   validates :price, presence: true, numericality: { greater_than_or_equal_to: 0 }
   validates :stock_quantity, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+
+
+  belongs_to :category, optional: true
 end
