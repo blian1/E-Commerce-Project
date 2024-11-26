@@ -18,6 +18,19 @@
   </head>
 
   <body>
+    <header>
+      <nav style="background-color: #f8f9fa; padding: 10px; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
+        <ul style="list-style: none; display: flex; justify-content: center; gap: 15px; margin: 0; padding: 0;">
+          <% Category.all.each do |category| %>
+            <li>
+              <%= link_to category.name, category_products_path(category), style: "text-decoration: none; color: #007bff; font-weight: bold;" %>
+            </li>
+          <% end %>
+        </ul>
+      </nav>
+    </header>
+
     <%= yield %>
   </body>
 </html>
+

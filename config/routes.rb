@@ -19,6 +19,12 @@ Rails.application.routes.draw do
   root "products#index"
   get "/pages/:title", to: "pages#show", as: :page
   resources :products, only: [ :index, :show ]
+
+  # based on categories display product
+  resources :categories, only: [] do
+    resources :products, only: :index, controller: "categories/products"
+  end
+
   direct :rails_blob do |blob|
     "#{blob.service_url}"
   end
