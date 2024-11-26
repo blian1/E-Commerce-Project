@@ -25,6 +25,10 @@ Rails.application.routes.draw do
     resources :products, only: :index, controller: "categories/products"
   end
 
+  # display  specific product
+  resources :products, only: [ :index, :show ]
+
+
   direct :rails_blob do |blob|
     "#{blob.service_url}"
   end

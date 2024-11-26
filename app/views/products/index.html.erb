@@ -1,31 +1,68 @@
-<h1 style="text-align: center; margin-bottom: 20px;">Product List
+<h1 style="text-align: center; margin-bottom: 20px;">Product List</h1>
 
+<div style="display: flex; margin: 20px auto; max-width: 1200px;">
 
-<div class="products" style="display: flex; flex-wrap: wrap; gap: 20px; margin: 50px auto; max-width: 1200px; justify-content: space-between;">
-  <% @products.each_with_index do |product, index| %>
-    <div class="product" style="width: 23%; border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
-      <% if product.respond_to?(:images) && product.images.attached? %>
-        <%= image_tag url_for(product.images.first), size: "200x350", style: "margin-bottom: 10px; border-radius: 5px;" %>
-      <% else %>
-        <div style="width: 100%; height: 150px; background-color: #f8f8f8; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-          <p style="color: #bbb;">No image available</p>
+  <div style="width: 20%; padding: 10px; border-right: 1px solid #ddd;">
+    <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">Filters</h3>
+
+    <%= form_with url: products_path, method: :get, local: true do |f| %>
+      <div style="margin-bottom: 20px;">
+        <%= f.text_field :query, value: params[:query], placeholder: "Search products...", style: "width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" %>
+      </div>
+      <div style="margin-bottom: 20px;">
+        <%= f.select :category_id, options_for_select(Category.all.map { |c| [c.name, c.id] }, params[:category_id]), include_blank: "All Categories", style: "width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" %>
+      </div>
+      <%= f.submit "Search", style: "width: 100%; padding: 8px; background-color: #007bff; color: white; border: none; border-radius: 5px;" %>
+    <% end %>
+    <hr style="margin: 20px 0;">
+    <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">Category</h3>
+    <ul style="list-style: none; padding: 0; margin: 0;">
+      <li>
+        <%= link_to "New Arrival", products_path(filter: 'new'), style: "text-decoration: none; color: #{params[:filter] == 'new' ? '#ff5722' : '#333'}; font-weight: #{params[:filter] == 'new' ? 'bold' : 'normal'};" %>
+      </li>
+      <li style="margin-top: 10px;">
+        <%= link_to "On Sale", products_path(filter: 'on_sale'), style: "text-decoration: none; color: #{params[:filter] == 'on_sale' ? '#ff5722' : '#333'}; font-weight: #{params[:filter] == 'on_sale' ? 'bold' : 'normal'};" %>
+      </li>
+      <li style="margin-top: 10px;">
+        <%= link_to "Recently Updated", products_path(filter: 'recently_updated'), style: "text-decoration: none; color: #{params[:filter] == 'recently_updated' ? '#ff5722' : '#333'}; font-weight: #{params[:filter] == 'recently_updated' ? 'bold' : 'normal'};" %>
+      </li>
+    </ul>
+  </div>
+
+  <div style="width: 80%; margin-left: 50px;">
+    <div class="products" style="display: flex; flex-wrap: wrap; gap: 20px; margin: 50px auto; max-width: 1200px; justify-content: flex-start;">
+      <% @products.each_with_index do |product, index| %>
+        <div class="product" style="width: 23%; border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
+          <% if product.respond_to?(:images) && product.images.attached? %>
+            <%= link_to product_path(product) do %>
+              <%= image_tag url_for(product.images.first), size: "200x350", style: "margin-bottom: 10px; border-radius: 5px;" %>
+            <% end %>
+          <% else %>
+            <%= link_to product_path(product) do %>
+              <div style="width: 100%; height: 150px; background-color: #f8f8f8; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
+                <p style="color: #bbb;">No image available</p>
+              </div>
+            <% end %>
+          <% end %>
+          <h3 style="font-size: 18px; margin: 10px 0 5px;">
+            <%= link_to product.name, product_path(product), style: "text-decoration: none; color: #007bff; font-weight: bold;" %>
+          </h3>
+          <p style="font-size: 16px; color: #333; font-weight: bold;">$<%= product.price %></p>
         </div>
       <% end %>
-      <h3 style="font-size: 18px; margin: 10px 0 5px;"><%= product.name %></h3>
-      <p style="font-size: 16px; color: #333; font-weight: bold;">$<%= product.price %></p>
+
+      <% remaining_slots = 4 - (@products.size % 4) if @products.size % 4 != 0 %>
+      <% remaining_slots&.times do %>
+        <div style="width: 23%;"></div>
+      <% end %>
     </div>
-  <% end %>
 
-  <% remaining_slots = 4 - (@products.size % 4) if @products.size % 4 != 0 %>
-  <% remaining_slots&.times do %>
-    <div style="width: 23%;"></div>
-  <% end %>
+    <div style="margin-top: 20px; font-size:16px;">
+      <%= paginate @products %>
+    </div>
+  </div>
 </div>
 
-
-<div style="margin-top: 20px; font-size:16px;">
-  <%= paginate @products %>
-</div>
 
 
 
