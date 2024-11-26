@@ -1,0 +1,22 @@
+<h2>Edit Profile</h2>
+<%= form_for @customer_user, url: update_profile_customer_user_path, method: :patch do |f| %>
+  <div>
+    <%= f.label :name, "Full Name" %>
+    <%= f.text_field :name, required: true, style: "width: 100%; padding: 10px;" %>
+  </div>
+  <div>
+    <%= f.label :phone_number, "Phone Number" %>
+    <%= f.text_field :phone_number, required: true, style: "width: 100%; padding: 10px;" %>
+  </div>
+  <div>
+    <%= f.label :province_id, "Province" %>
+    <%= f.collection_select :province_id, @provinces, :id, :name, include_blank: "Select Province" %>
+  </div>
+  <div>
+    <%= f.label :address, "Address" %>
+    <%= f.text_area :address, rows: 3, style: "width: 100%; padding: 10px;" %>
+  </div>
+  <div>
+    <%= f.submit "Update Profile", style: "padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer;" %>
+  </div>
+<% end %>

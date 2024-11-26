@@ -1,4 +1,5 @@
 Rails.application.routes.draw do
+  devise_for :customer_users, controllers: { registrations: "customer_users/registrations" }
   get "products/index"
   get "pages/show"
   devise_for :admin_users, ActiveAdmin::Devise.config
@@ -27,6 +28,17 @@ Rails.application.routes.draw do
 
   # display  specific product
   resources :products, only: [ :index, :show ]
+
+  resources :customer_users, only: [ :show ]
+
+
+  resources :customer_users, only: [ :show ] do
+    member do
+      get :edit_profile
+      patch :update_profile
+    end
+  end
+
 
 
   direct :rails_blob do |blob|
