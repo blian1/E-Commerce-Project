@@ -2,7 +2,7 @@ class OrdersController < ApplicationController
   before_action :set_order, only: [ :show ]
 
   def show
-    unless @order.customer == current_user
+    unless @order.customer_user == current_customer_user
       redirect_to root_path, alert: "You are not authorized to view this order."
     end
   end

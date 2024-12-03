@@ -1,33 +1,28 @@
 class CheckoutsController < ApplicationController
   before_action :initialize_cart
+  before_action :authenticate_customer_user!
 
   def new
-    @customer = current_customer_user || CustomerUser.new
-    if current_customer_user
-      @customer.name ||= current_customer_user.name
-      @customer.address ||= current_customer_user.address
-      @customer.phone_number ||= current_customer_user.phone_number
-      @customer.province_id ||= current_customer_user.province_id
+    @customer = current_customer_user
+    if @customer
+      @customer.name ||= @customer.name
+      @customer.address ||= @customer.address
+      @customer.phone_number ||= @customer.phone_number
+      @customer.province_id ||= @customer.province_id
     end
     @cart_items = session[:cart] || {}
     @products = Product.where(id: @cart_items.keys)
-
     @provinces = Province.all
   end
 
   def create
-    @customer = current_user || CustomerUser.new(customer_params)
-
-    unless @customer.save
-      @provinces = Province.all
-      @cart_items = session[:cart] || {}
-      @products = Product.where(id: @cart_items.keys) # 重新初始化 @products
-      flash[:alert] = "Failed to save customer information."
-      render :new and return
-    end
+    Rails.logger.info "Current Customer User: #{current_customer_user.inspect}"
 
     ActiveRecord::Base.transaction do
-      order = @customer.orders.create!(total_price: calculate_total_price)
+      order = Order.create!(
+        customer_user_id: current_customer_user.id,
+        total_price: calculate_total_price(current_customer_user.province_id)
+      )
 
       product_ids = session[:cart].keys
       products = Product.where(id: product_ids)
@@ -46,13 +41,9 @@ class CheckoutsController < ApplicationController
       redirect_to order_path(order), notice: "Order successfully placed!"
     end
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
-    @provinces = Province.all
-    @cart_items = session[:cart] || {}
-    @products = Product.where(id: @cart_items.keys)
     flash[:alert] = "There was an error processing your order: #{e.message}"
     render :new
   end
-
 
   def fetch_tax_rates
     province = Province.find_by(id: params[:province_id])
@@ -67,20 +58,19 @@ class CheckoutsController < ApplicationController
     end
   end
 
-
   private
 
   def customer_params
     params.require(:customer_user).permit(:name, :address, :phone_number, :province_id)
   end
 
-  def calculate_total_price
+  def calculate_total_price(province_id)
     subtotal = session[:cart].sum do |product_id, quantity|
       product = Product.find(product_id)
       product.price * quantity
     end
 
-    province = Province.find(current_user.province_id)
+    province = Province.find(province_id)
     taxes = subtotal * (province.pst + province.gst + province.hst)
     subtotal + taxes
   end
