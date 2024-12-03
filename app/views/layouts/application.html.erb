@@ -53,7 +53,7 @@
             </a>
           </li>
           <li>
-            <a href="#" style="text-decoration: none; color: black;">
+            <a href="<%= cart_path %>" style="text-decoration: none; color: black;">
               <i class="fas fa-shopping-bag" style="font-size: 24px;"></i>
             </a>
           </li>
@@ -64,13 +64,30 @@
     <!-- Flash Messages -->
     <div id="flash-messages" style="position: fixed; top: 10px; left: 50%; transform: translateX(-50%); z-index: 1000; width: 90%; max-width: 500px;">
       <% flash.each do |key, message| %>
-        <div style="background-color: <%= key == 'notice' ? '#4caf50' : '#f44336' %>; color: white; padding: 10px 20px; margin-bottom: 10px; border-radius: 5px; text-align: center; font-weight: bold;">
+        <div class="flash-message <%= key %>" style="background-color: <%= key == 'notice' ? '#4caf50' : '#f44336' %>; color: white; padding: 10px 20px; margin-bottom: 10px; border-radius: 5px; text-align: center; font-weight: bold;">
           <%= message %>
         </div>
       <% end %>
     </div>
 
+
     <!-- Page Content -->
     <%= yield %>
   </body>
 </html>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const flashMessages = document.getElementById('flash-messages');
+    if (flashMessages) {
+      setTimeout(() => {
+        flashMessages.style.transition = 'opacity 0.5s ease';
+        flashMessages.style.opacity = '0';
+        setTimeout(() => {
+          flashMessages.style.display = 'none';
+        }, 500);
+      }, 2000);
+    }
+  });
+</script>

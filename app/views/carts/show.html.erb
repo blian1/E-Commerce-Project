@@ -1,0 +1,324 @@
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<div id="app-cart" class="container py-4">
+  <div class="justify-content-center mb-4">
+    <div class="col-12 col-md-9">
+      <div class="steps-wrap d-flex justify-content-between align-items-center">
+        <div class="step active text-center">
+          <span class="step-number">1</span>
+          <span class="step-title">Cart</span>
+        </div>
+        <div class="step text-center">
+          <span class="step-number">2</span>
+          <span class="step-title">Checkout</span>
+        </div>
+        <div class="step text-center">
+          <span class="step-number">3</span>
+          <span class="step-title">Payment</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 30px;">
+      <div class="custom-left" style="width: 70%; height: 600px; margin-right: 10px;">
+        <div class="card" style="height: 100%;">
+          <div class="card-body">
+            <h4 class="mb-3">Product</h4>
+            <div class="table-responsive" style="height: calc(100% - 50px); overflow-y: auto;">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th><input type="checkbox" id="check-all" class="form-check-input"></th>
+                    <th>Product</th>
+                    <th>Quantity</th>
+                    <th>Subtotal</th>
+                    <th class="text-end">Action</th>
+                  </tr>
+                </thead>
+               <tbody>
+                  <% @products.each do |product| %>
+                    <tr>
+                      <td>
+                        <input
+                          type="checkbox"
+                          class="product-checkbox"
+                          data-id="<%= product.id %>"
+                          data-price="<%= product.price %>"
+                        >
+                      </td>
+                      <td>
+                        <div class="align-items-center">
+                          <% if product.images.attached? %>
+                            <img src="<%= url_for(product.images.first) %>" alt="Product Image" class="img-fluid rounded me-2" style="width: 80px;">
+                          <% else %>
+                            <img src="/placeholder.png" alt="Default Image" class="img-fluid rounded me-2" style="width: 80px;">
+                          <% end %>
+                          <div>
+                            <strong><%= product.name %></strong><br>
+                            <span class="text-muted">$<%= product.price %></span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>
+                        <input
+                          type="number"
+                          class="product-quantity form-control"
+                          data-id="<%= product.id %>"
+                          data-price="<%= product.price %>"
+                          value="<%= @cart_items[product.id.to_s] %>"
+                          min="1"
+                        >
+                      </td>
+                      <td>
+                        <span class="product-subtotal">$<%= product.price * @cart_items[product.id.to_s].to_i %></span>
+                      </td>
+                      <td class="text-end">
+                        <%= button_to remove_item_cart_path(product_id: product.id), method: :delete, class: "btn btn-link text-danger p-0" do %>
+                          <i class="bi bi-x-circle"></i> Delete
+                        <% end %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="custom-right" style="width: 28%; height: 300px;">
+        <div class="card" style="height: 100%;">
+          <div class="card-body">
+            <h4 class="mb-3">Product Total</h4>
+            <div>
+              <div class="d-flex justify-content-between py-2">
+                <span>All</span>
+                <span id="all-count"><%= @products.count %></span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between py-2">
+                <span>Selected</span>
+                <span id="selected-count">0</span>
+              </div>
+              <hr>
+              <div class="d-flex justify-content-between py-2">
+                <strong>Product Total</strong>
+                <strong id="product-total">$0.00</strong>
+              </div>
+            </div>
+            <button class="checkout-btn">Checkout</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+
+<style>
+
+body{
+  font-family: 'Nunito Sans', sans-serif;
+}
+.container {
+  margin-top: 50px;
+  margin-left: 300px;
+  margin-right: 300px;
+}
+h4{
+  color: black;
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 5px;
+}
+
+.steps-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+}
+
+.step {
+  text-align: center;
+  flex: 1;
+}
+.step.active {
+  color: #000;
+  font-weight: bold;
+}
+.step-number {
+  background-color: #f8f9fa;
+  border: 1px solid #6c757d;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+
+.table {
+  border-collapse: collapse;
+  width: 100%;
+}
+.table th,
+.table td {
+  padding: 12px;
+  border-bottom: 1px solid #ddd;
+}
+
+.table th {
+  text-align: left;
+  color: #6c757d;
+}
+
+.card-body ul.list-group {
+  margin-top: 20px;
+}
+
+.card-body ul.list-group li {
+  padding: 10px 15px;
+}
+
+.btn-primary {
+  background-color: #f97316;
+  border-color: #f97316;
+}
+
+.btn-primary:hover {
+  background-color: #e05c0b;
+  border-color: #e05c0b;
+}
+
+.row {
+  display: flex;
+  gap: 15px;
+}
+
+.col-md-9,
+.col-md-3 {
+  display: flex;
+  flex-direction: column;
+}
+
+.card {
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.custom-right{
+  font-size: 16px;
+  color: black;
+}
+.checkout-btn {
+    margin-top: 20px;
+    width: 320px;
+    height: 50px;
+    background-color: #fd6727;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+
+  .checkout-btn:hover {
+    background-color: #e05c0b;
+  }
+
+
+  .checkout-btn:active {
+    background-color: #c94a06;
+  }
+
+  .d-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+</style>
+
+<script>
+  function initializeCart() {
+    const cartContainer = document.querySelector('tbody');
+    const selectedCountEl = document.querySelector('#selected-count');
+    const productTotalEl = document.querySelector('#product-total');
+    const allCountEl = document.querySelector('#all-count');
+
+    function initializeAllCount() {
+      allCountEl.textContent = document.querySelectorAll('.product-checkbox').length;
+    }
+
+    function updateSummary() {
+      let selectedCount = 0;
+      let productTotal = 0;
+
+      document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        const id = checkbox.dataset.id;
+        const price = parseFloat(checkbox.dataset.price || 0);
+        const quantityInput = document.querySelector(`.product-quantity[data-id="${id}"]`);
+        const quantity = parseInt(quantityInput?.value || 1);
+
+        if (checkbox.checked) {
+          selectedCount += 1;
+          productTotal += price * quantity;
+        }
+      });
+
+      selectedCountEl.textContent = selectedCount;
+      productTotalEl.textContent = `$${productTotal.toFixed(2)}`;
+    }
+
+    function updateSubtotal(event) {
+      const quantityInput = event.target;
+      const id = quantityInput.dataset.id;
+      const price = parseFloat(quantityInput.dataset.price || 0);
+      const quantity = parseInt(quantityInput.value || 1);
+      const subtotalEl = quantityInput.closest('tr').querySelector('.product-subtotal');
+      const checkbox = document.querySelector(`.product-checkbox[data-id="${id}"]`);
+
+      subtotalEl.textContent = `$${(price * quantity).toFixed(2)}`;
+
+      if (!checkbox.checked) {
+        checkbox.checked = true;
+      }
+
+      updateSummary();
+    }
+
+    function initializeListeners() {
+      document.querySelectorAll('.product-checkbox').forEach(checkbox => {
+        checkbox.addEventListener('change', updateSummary);
+      });
+
+      document.querySelectorAll('.product-quantity').forEach(quantityInput => {
+        quantityInput.addEventListener('input', updateSubtotal);
+      });
+    }
+
+    initializeAllCount();
+    initializeListeners();
+    updateSummary();
+  }
+
+  document.addEventListener('DOMContentLoaded', initializeCart);
+  document.addEventListener('turbo:load', initializeCart);
+
+  document.querySelector('.checkout-btn').addEventListener('click', () => {
+      window.location.href = '/checkouts/new';
+  });
+
+</script>

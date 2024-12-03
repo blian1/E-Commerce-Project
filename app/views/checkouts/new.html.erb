@@ -1,0 +1,253 @@
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<div id="checkout-page" class="container py-4">
+  <div class="steps-wrap d-flex justify-content-between align-items-center">
+    <div class="step active text-center">
+      <span class="step-number">1</span>
+      <span class="step-title">Cart</span>
+    </div>
+    <div class="step active text-center">
+      <span class="step-number">2</span>
+      <span class="step-title">Checkout</span>
+    </div>
+    <div class="step text-center">
+      <span class="step-number">3</span>
+      <span class="step-title">Payment</span>
+    </div>
+  </div>
+
+  <div class="row" style="margin-top: 30px;">
+    <div class="col-md-6">
+      <div class="card shadow-sm rounded">
+        <div class="card-body">
+          <h4 class="mb-4 text-center">Customer Information</h4>
+          <%= form_with model: @customer, url: checkouts_path, method: :post, local: true do |f| %>
+            <div class="mb-3">
+              <%= f.label :name, "Full Name", class: "form-label fw-bold" %>
+              <%= f.text_field :name, class: "form-control rounded-pill px-3", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :address, "Address", class: "form-label fw-bold" %>
+              <%= f.text_field :address, class: "form-control rounded-pill px-3", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :phone_number, "Phone Number", class: "form-label fw-bold" %>
+              <%= f.text_field :phone_number, class: "form-control rounded-pill px-3", required: true %>
+            </div>
+
+            <div class="mb-3">
+              <%= f.label :province_id, "Province", class: "form-label fw-bold" %>
+              <%= f.collection_select :province_id, @provinces, :id, :name,
+                    { include_blank: "Select a Province" },
+                    { class: "form-select", required: true, data: { action: "change->checkout#updateTax" } } %>
+            </div>
+
+            <h4 class="mb-3">Order Summary</h4>
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>Product</th>
+                  <th>Quantity</th>
+                  <th>Price</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% @products.each do |product| %>
+                  <tr>
+                    <td>
+                      <div class="d-flex align-items-center">
+                        <% if product.images.attached? %>
+                          <img src="<%= url_for(product.images.first) %>" alt="Product Image" class="img-fluid rounded me-2" style="width: 50px; height: 50px;">
+                        <% else %>
+                          <img src="/placeholder.png" alt="Default Image" class="img-fluid rounded me-2" style="width: 50px; height: 50px;">
+                        <% end %>
+                        <span><%= product.name %></span>
+                      </div>
+                    </td>
+                    <td><%= @cart_items[product.id.to_s] %></td>
+                    <td>$<%= product.price * @cart_items[product.id.to_s].to_i %></td>
+                  </tr>
+                <% end %>
+              </tbody>
+            </table>
+            <hr>
+            <% subtotal = @products.sum { |product| product.price * @cart_items[product.id.to_s].to_i } %>
+            <div class="d-flex justify-content-between">
+              <strong>Subtotal:</strong>
+              <strong id="subtotal">$<%= subtotal %></strong>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <span>GST (<span id="gst-rate">0</span>%)</span>
+              <span id="gst-amount">$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>PST (<span id="pst-rate">0</span>%)</span>
+              <span id="pst-amount">$0.00</span>
+            </div>
+            <div class="d-flex justify-content-between">
+              <span>HST (<span id="hst-rate">0</span>%)</span>
+              <span id="hst-amount">$0.00</span>
+            </div>
+            <hr>
+            <div class="d-flex justify-content-between">
+              <strong>Total Price:</strong>
+              <strong id="total-price">$<%= subtotal %></strong>
+            </div>
+
+            <button class="checkout-btn btn btn-primary mt-4">Checkout</button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<style>
+  body {
+  font-family: 'Nunito Sans', sans-serif;
+}
+
+.container {
+  margin-top: 50px;
+  margin-left: 300px;
+  margin-right: 300px;
+}
+
+.steps-wrap {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  margin-top: 20px;
+}
+
+.step {
+  text-align: center;
+  flex: 1;
+}
+
+.step.active .step-number {
+  background-color: black;
+  color: white;
+}
+
+.step-number {
+  background-color: #f8f9fa;
+  border: 1px solid #6c757d;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  line-height: 30px;
+  display: inline-block;
+  text-align: center;
+  margin-bottom: 5px;
+}
+
+.step-title {
+  font-weight: bold;
+  color: #6c757d;
+}
+
+.card {
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card-body {
+  padding: 20px;
+}
+
+.checkout-btn {
+  background-color: #fd6727;
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.checkout-btn:hover {
+  background-color: #e05c0b;
+}
+
+.table th,
+.table td {
+  vertical-align: middle;
+}
+
+.form-label {
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.form-control,
+.form-select {
+  border-radius: 5px;
+  padding: 10px;
+}
+</style>
+
+<script>
+ document.addEventListener('DOMContentLoaded', () => {
+  const provinceSelect = document.querySelector('select[name="customer_user[province_id]"]');
+  const subtotalElement = document.getElementById('subtotal');
+  const gstRateElement = document.getElementById('gst-rate');
+  const pstRateElement = document.getElementById('pst-rate');
+  const hstRateElement = document.getElementById('hst-rate');
+  const gstAmountElement = document.getElementById('gst-amount');
+  const pstAmountElement = document.getElementById('pst-amount');
+  const hstAmountElement = document.getElementById('hst-amount');
+  const totalPriceElement = document.getElementById('total-price');
+
+  async function updateTaxRates(provinceId) {
+    if (!provinceId) return;
+
+    try {
+      // Fetch tax rates from the server
+      const response = await fetch(`/checkouts/fetch_tax_rates?province_id=${provinceId}`);
+      if (!response.ok) throw new Error('Failed to fetch tax rates');
+      const { gst, pst, hst } = await response.json();
+
+      // Get subtotal
+      const subtotal = parseFloat(subtotalElement.textContent.replace('$', ''));
+
+      // Calculate taxes
+      const gstAmount = subtotal * gst;
+      const pstAmount = subtotal * pst;
+      const hstAmount = subtotal * hst;
+
+      // Update rates and amounts on the page
+      gstRateElement.textContent = (gst * 100).toFixed(1);
+      pstRateElement.textContent = (pst * 100).toFixed(1);
+      hstRateElement.textContent = (hst * 100).toFixed(1);
+      gstAmountElement.textContent = `$${gstAmount.toFixed(2)}`;
+      pstAmountElement.textContent = `$${pstAmount.toFixed(2)}`;
+      hstAmountElement.textContent = `$${hstAmount.toFixed(2)}`;
+
+      // Update total price
+      const totalPrice = subtotal + gstAmount + pstAmount + hstAmount;
+      totalPriceElement.textContent = `$${totalPrice.toFixed(2)}`;
+    } catch (error) {
+      console.error(error);
+      alert('Failed to update tax rates.');
+    }
+  }
+
+  const initialProvinceId = provinceSelect.value;
+  if (initialProvinceId) {
+    updateTaxRates(initialProvinceId);
+  }
+
+  provinceSelect.addEventListener('change', (event) => {
+    updateTaxRates(event.target.value);
+  });
+});
+
+</script>

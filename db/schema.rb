@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2024_11_26_064501) do
+ActiveRecord::Schema[7.2].define(version: 2024_12_03_062222) do
   create_table "active_admin_comments", force: :cascade do |t|
     t.string "namespace"
     t.text "body"
@@ -88,6 +88,25 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_26_064501) do
     t.index ["reset_password_token"], name: "index_customer_users_on_reset_password_token", unique: true
   end
 
+  create_table "order_items", force: :cascade do |t|
+    t.integer "order_id", null: false
+    t.integer "product_id", null: false
+    t.integer "quantity", default: 1, null: false
+    t.decimal "price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["order_id"], name: "index_order_items_on_order_id"
+    t.index ["product_id"], name: "index_order_items_on_product_id"
+  end
+
+  create_table "orders", force: :cascade do |t|
+    t.integer "customer_user_id", null: false
+    t.decimal "total_price", precision: 10, scale: 2, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_user_id"], name: "index_orders_on_customer_user_id"
+  end
+
   create_table "pages", force: :cascade do |t|
     t.string "title"
     t.text "content"
@@ -111,6 +130,9 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_26_064501) do
     t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.decimal "pst", precision: 5, scale: 3, default: "0.0", null: false
+    t.decimal "gst", precision: 5, scale: 3, default: "0.0", null: false
+    t.decimal "hst", precision: 5, scale: 3, default: "0.0", null: false
     t.index ["name"], name: "index_provinces_on_name", unique: true
   end
 
@@ -129,5 +151,8 @@ ActiveRecord::Schema[7.2].define(version: 2024_11_26_064501) do
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "customer_users", "provinces"
+  add_foreign_key "order_items", "orders"
+  add_foreign_key "order_items", "products"
+  add_foreign_key "orders", "customer_users"
   add_foreign_key "products", "categories"
 end

@@ -40,6 +40,28 @@ Rails.application.routes.draw do
   end
 
 
+  resource :cart, only: [ :show ] do
+    post :add_to_cart, to: "carts#add_to_cart"
+  end
+
+  resource :cart, only: [ :show ] do
+    delete :remove_item, to: "carts#remove_item", as: :remove_item
+  end
+
+
+  resources :orders, only: [ :show ]
+
+  resources :checkouts, only: [ :new, :create ] do
+    collection do
+      get :fetch_tax_rates
+    end
+  end
+
+
+
+
+
+
 
   direct :rails_blob do |blob|
     "#{blob.service_url}"
