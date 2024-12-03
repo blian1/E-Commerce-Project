@@ -17,6 +17,9 @@ ActiveAdmin.register Product do
     column :price
     column :stock_quantity
     column :category
+    column :on_sale do |product|
+      product.on_sale ? "YES" : "NO"
+    end
     actions
   end
 
@@ -27,6 +30,7 @@ ActiveAdmin.register Product do
       f.input :price
       f.input :stock_quantity
       f.input :category, as: :select, collection: Category.all.map { |c| [ c.name, c.id ] }, include_blank: "Select a Category"
+      f.input :on_sale, as: :boolean, label: "On Sale"
     end
 
     # Display existing images
@@ -70,6 +74,7 @@ ActiveAdmin.register Product do
       row :price
       row :stock_quantity
       row :category
+      row :on_sale
       row :images do |product|
         if product.images.attached?
           product.images.map do |img|

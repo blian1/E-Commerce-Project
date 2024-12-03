@@ -1,0 +1,19 @@
+<h1>Welcome  <%= @customer_user.name  || ""%>!</h1>
+
+<p><strong>Name:</strong> <%= @customer_user.name || "Not set yet" %></p>
+<p><strong>Phone:</strong> <%= @customer_user.phone_number || "Not set yet" %></p>
+<p><strong>Email:</strong> <%= @customer_user.email %></p>
+<p><strong>Province:</strong> <%= @customer_user.province&.name || "Not set yet" %></p>
+<p><strong>Address</strong> <%= @customer_user.address || "Not set yet" %></p>
+
+<div style="margin-top: 20px;">
+  <%= link_to "Change Password", edit_customer_user_registration_path, class: "btn btn-primary", style: "margin-right: 10px;" %>
+  <%= link_to "Edit Profile", edit_profile_customer_user_path(@customer_user), class: "btn btn-secondary" %>
+</div>
+
+<div style="text-align: center; margin-top: 20px;">
+  <%= button_to "Logout", destroy_customer_user_session_path, method: :delete, class: "btn btn-primary" %>
+</div>
+
+
+
