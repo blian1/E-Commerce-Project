@@ -1,61 +1,134 @@
-<h1 style="text-align: center; margin-bottom: 20px;"><%= @category.name %> - Products</h1>
+<h1 class="page-title"><%= @category.name %> - Products</h1>
 
-<div style="display: flex; margin: 20px auto; max-width: 1200px;">
-
-  <div style="width: 20%; padding: 10px; border-right: 1px solid #ddd;">
-    <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">Filters</h3>
-
-    <%= form_with url: products_path, method: :get, local: true do |f| %>
-      <div style="margin-bottom: 20px;">
-        <%= f.text_field :query, value: params[:query], placeholder: "Search products...", style: "width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" %>
-      </div>
-      <div style="margin-bottom: 20px;">
-        <%= f.select :category_id, options_for_select(Category.all.map { |c| [c.name, c.id] }, params[:category_id]), include_blank: "All Categories", style: "width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 5px;" %>
-      </div>
-      <%= f.submit "Search", style: "width: 100%; padding: 8px; background-color: #007bff; color: white; border: none; border-radius: 5px;" %>
-    <% end %>
-    <hr style="margin: 20px 0;">
-    <h3 style="font-size: 20px; font-weight: bold; margin-bottom: 20px;">Category</h3>
-    <ul style="list-style: none; padding: 0; margin: 0;">
-      <li>
-        <%= link_to "New Arrival", products_path(filter: 'new'), style: "text-decoration: none; color: #{params[:filter] == 'new' ? '#ff5722' : '#333'}; font-weight: #{params[:filter] == 'new' ? 'bold' : 'normal'};" %>
-      </li>
-      <li style="margin-top: 10px;">
-        <%= link_to "On Sale", products_path(filter: 'on_sale'), style: "text-decoration: none; color: #{params[:filter] == 'on_sale' ? '#ff5722' : '#333'}; font-weight: #{params[:filter] == 'on_sale' ? 'bold' : 'normal'};" %>
-      </li>
-      <li style="margin-top: 10px;">
-        <%= link_to "Recently Updated", products_path(filter: 'recently_updated'), style: "text-decoration: none; color: #{params[:filter] == 'recently_updated' ? '#ff5722' : '#333'}; font-weight: #{params[:filter] == 'recently_updated' ? 'bold' : 'normal'};" %>
-      </li>
-    </ul>
-  </div>
-
-  <div style="width: 80%; margin-left: 50px;">
-    <div class="products" style="display: flex; flex-wrap: wrap; gap: 20px; justify-content: flex-start; margin-top: 20px;">
-      <% @products.each do |product| %>
-        <div class="product" style="width: 23%; border: 1px solid #ddd; border-radius: 5px; padding: 10px; text-align: center; box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);">
-          <%= link_to product_path(product), style: "text-decoration: none; color: inherit;" do %>
-            <% if product.respond_to?(:images) && product.images.attached? %>
-              <%= image_tag url_for(product.images.first), size: "200x350", style: "margin-bottom: 10px; border-radius: 5px;" %>
-            <% else %>
-              <div style="width: 100%; height: 150px; background-color: #f8f8f8; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; border-radius: 5px;">
-                <p style="color: #bbb;">No image available</p>
-              </div>
-            <% end %>
-          <% end %>
-          <%= link_to product.name, product_path(product), style: "font-size: 18px; margin: 10px 0 5px; display: block; text-decoration: none; color: #007bff; font-weight: bold;" %>
-          <p style="font-size: 16px; color: #333; font-weight: bold;">$<%= product.price %></p>
-        </div>
+<div class="products-grid">
+  <% @products.each do |product| %>
+    <div class="product-card">
+      <%= link_to product_path(product) do %>
+        <% if product.respond_to?(:images) && product.images.attached? %>
+          <%= image_tag product.images.first, class: "product-image" %>
+        <% else %>
+          <div class="no-image">No image available</div>
+        <% end %>
       <% end %>
-
-
-      <% remaining_slots = 4 - (@products.size % 4) if @products.size % 4 != 0 %>
-      <% remaining_slots&.times do %>
-        <div style="width: 23%;"></div>
-      <% end %>
+      <h3>
+        <%= link_to product.name, product_path(product), class: "product-name" %>
+      </h3>
+      <p class="product-price">$<%= product.price %></p>
     </div>
-
-    <div style="margin-top: 20px; font-size:16px;">
-      <%= paginate @products %>
-    </div>
-  </div>
+  <% end %>
 </div>
+
+<div class="pagination">
+  <%= paginate @products %>
+</div>
+
+
+<style>
+  body {
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom right, #f8f2fc, #fdfdfd);
+    color: #333;
+    margin: 0;
+    padding: 0;
+  }
+
+  .page-title {
+    font-family: 'Kosugi Maru', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    margin: 40px 0;
+    color: #333;
+  }
+
+  .products-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+    max-width: 1200px;
+    margin: 0 auto 40px;
+    padding: 0 20px;
+  }
+
+  .product-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    position: relative;
+  }
+
+  .product-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .product-image {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    max-height: 300px;
+  }
+
+  .no-image {
+    width: 100%;
+    height: 200px;
+    background-color: #f3f3f3;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #bbb;
+    font-size: 0.9rem;
+  }
+
+  .product-name {
+    display: block;
+    margin: 10px 0 5px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .product-name:hover {
+    color: #ff79c6;
+  }
+
+  .product-price {
+    font-size: 0.9rem;
+    color: #555;
+    font-weight: 600;
+  }
+
+  .pagination {
+    display: flex;
+    gap: 10px;
+    margin-top: 30px;
+    justify-content: center;
+  }
+
+  .pagination a, .pagination span {
+    display: inline-block;
+    padding: 8px 12px;
+    background: #fff;
+    border-radius: 5px;
+    color: #333;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: background 0.3s;
+  }
+
+  .pagination a:hover {
+    background: #ffecf7;
+  }
+
+  .pagination .current {
+    background: #ff79c6;
+    color: #fff;
+    font-weight: 700;
+  }
+</style>

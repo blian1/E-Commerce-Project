@@ -1,29 +1,119 @@
-<h1>Order Details</h1>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
-<p><strong>Order ID:</strong> <%= @order.id %></p>
-<p><strong>Date:</strong> <%= @order.created_at.strftime("%B %d, %Y %H:%M") %></p>
-<p><strong>Total Price:</strong> $<%= @order.total_price %></p>
+<div class="order-details-container">
+  <h1 class="text-center">Order Details</h1>
 
-<h2>Order Items</h2>
-<table class="table">
-  <thead>
-    <tr>
-      <th>Product</th>
-      <th>Quantity</th>
-      <th>Price</th>
-      <th>Total</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @order.order_items.each do |item| %>
+  <div class="order-info">
+    <p><strong>Order ID:</strong> <%= @order.id %></p>
+    <p><strong>Date:</strong> <%= @order.created_at.strftime("%B %d, %Y %H:%M") %></p>
+  </div>
+
+  <h2 class="section-title">Order Items</h2>
+  <table class="table">
+    <thead>
       <tr>
-        <td><%= item.product.name %></td>
-        <td><%= item.quantity %></td>
-        <td>$<%= item.price %></td>
-        <td>$<%= item.price * item.quantity %></td>
+        <th>Product</th>
+        <th>Quantity</th>
+        <th>Price</th>
+        <th>Total</th>
       </tr>
-    <% end %>
-  </tbody>
-</table>
+    </thead>
+    <tbody>
+      <% @order.order_items.each do |item| %>
+        <tr>
+          <td><%= item.product.name %></td>
+          <td><%= item.quantity %></td>
+          <td>$<%= item.price %></td>
+          <td>$<%= (item.price * item.quantity).round(2) %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
 
-<%= link_to "Back to Home", root_path, class: "btn btn-secondary" %>
+  <h2 class="section-title">Taxes</h2>
+  <div class="tax-details">
+    <p><strong>GST:</strong> (<%= (@order.customer_user.province.gst * 100).round(1) %>%) $<%= @gst %></p>
+    <p><strong>PST:</strong> (<%= (@order.customer_user.province.pst * 100).round(1) %>%) $<%= @pst %></p>
+    <p><strong>HST:</strong> (<%= (@order.customer_user.province.hst * 100).round(1) %>%) $<%= @hst %></p>
+  </div>
+
+  <h2 class="section-title">Order Summary</h2>
+  <div class="summary-details">
+    <p><strong>Subtotal:</strong> $<%= @subtotal %></p>
+    <p><strong>Total Taxes:</strong> $<%= (@gst + @pst + @hst).round(2) %></p>
+    <p><strong>Total Price:</strong> $<%= @total_price %></p>
+    <p><strong>Address:</strong> <%= @order.customer_user.address %></p>
+    <p><strong>Phone:</strong> <%= @order.customer_user.phone_number %></p>
+  </div>
+
+  <div class="text-center mt-4">
+    <%= link_to "Back to Home", root_path, class: "btn btn-primary rounded-pill px-4 py-2" %>
+  </div>
+</div>
+
+<style>
+  body {
+    font-family: 'Nunito Sans', sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+  }
+
+  .order-details-container {
+    max-width: 800px;
+    margin: 50px auto;
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .text-center {
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 24px;
+    font-weight: 600;
+    margin-top: 30px;
+    border-bottom: 2px solid #ddd;
+    padding-bottom: 5px;
+  }
+
+  .order-info p,
+  .tax-details p,
+  .summary-details p {
+    font-size: 16px;
+    margin: 10px 0;
+  }
+
+  .table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+  }
+
+  .table th,
+  .table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+  }
+
+  .table th {
+    background-color: #f8f9fa;
+    font-weight: 600;
+  }
+
+  .btn-primary {
+    color: white;
+    text-decoration: none;
+
+  }
+
+  .rounded-pill {
+    border-radius: 50px;
+  }
+</style>
+
+
