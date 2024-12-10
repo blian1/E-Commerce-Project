@@ -3,6 +3,7 @@
 class CustomerUsersController < ApplicationController
   before_action :authenticate_customer_user!
 
+
   def show
     @customer_user = current_customer_user
   end

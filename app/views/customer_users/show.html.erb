@@ -212,14 +212,14 @@
           </div>
 
           <nav class="list-group account-links">
-            <a class="list-group-item active" href="http://beikeshop.local/account">Account</a>
-            <a class="list-group-item" href="http://beikeshop.local/account/edit">Edit</a>
-            <a class="list-group-item" href="http://beikeshop.local/account/password">Change password</a>
-            <a class="list-group-item" href="http://beikeshop.local/account/orders">Order</a>
-            <a class="list-group-item" href="http://beikeshop.local/account/addresses">Addresses</a>
-            <a class="list-group-item" href="http://beikeshop.local/account/wishlist">Wishlist</a>
-            <a class="list-group-item" href="http://beikeshop.local/account/rmas">RMA</a>
-            <a class="list-group-item" href="http://beikeshop.local/logout">Sign Out</a>
+            <a class="list-group-item active" href="">Account</a>
+            <a class="list-group-item" href="">Edit</a>
+            <a class="list-group-item" href="">Change password</a>
+            <a class="list-group-item" href="">Order</a>
+            <a class="list-group-item" href="/customer_users/<%= @customer_user.id %>/edit_profile">Edit Profile</a>
+            <a class="list-group-item" href="">Wishlist</a>
+            <a class="list-group-item" href="">RMA</a>
+            <a class="list-group-item" href="<%= destroy_customer_user_session_path %>" data-method="delete" rel="nofollow">Sign Out</a>
           </nav>
         </div>
       </div>
