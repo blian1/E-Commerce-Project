@@ -174,7 +174,7 @@
       },
       onCancel: (data) => {
         alert("Payment was cancelled.");
-        window.location.href = "/checkouts";
+        window.location.href = `/orders/${orderId}`;
       },
       onError: (err) => {
         console.error("PayPal Error: ", err);

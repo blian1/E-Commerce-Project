@@ -1,0 +1,17 @@
+<div class="products-grid">
+  <% @products.each do |product| %>
+    <div class="product-card">
+      <%= link_to product_path(product) do %>
+        <% if product.respond_to?(:images) && product.images.attached? %>
+          <%= image_tag product.images.first, style: "width:100%;height:auto;" %>
+        <% else %>
+          <div class="no-image">No image available</div>
+        <% end %>
+      <% end %>
+      <h3>
+        <%= link_to product.name, product_path(product) %>
+      </h3>
+      <p>$<%= product.price %></p>
+    </div>
+  <% end %>
+</div>

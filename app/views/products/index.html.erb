@@ -1,12 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Anime Store</title>
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Kosugi+Maru&display=swap" rel="stylesheet">
-<%= stylesheet_link_tag 'application', media: 'all' %>
-<%= javascript_include_tag 'application' %>
+<%= render "devise/shared/hero" %>
+
+<div class="container">
+  <%= render "products/sidebar" %>
+
+  <div class="main-content">
+    <h2>Product List</h2>
+    <%= render "products/product_grid", products: @products %>
+
+    <div class="pagination">
+      <%= paginate @products %>
+    </div>
+  </div>
+</div>
+
+
+
 <style>
   body {
     font-family: 'Poppins', sans-serif;
@@ -217,70 +225,3 @@
     }
   }
 </style>
-</head>
-<body>
-<div class="hero">
-  <h1>Welcome to Anime Store</h1>
-  <p>Discover your favorite anime-themed products</p>
-</div>
-
-<div class="container">
-  <div class="sidebar">
-    <h3>Filters</h3>
-    <%= form_with url: products_path, method: :get, local: true do |f| %>
-      <div class="form-group">
-        <%= f.text_field :query, value: params[:query], placeholder: "Search products..." %>
-      </div>
-      <div class="form-group">
-        <%= f.select :category_id, options_for_select(Category.all.map { |c| [c.name, c.id] }, params[:category_id]), include_blank: "All Categories" %>
-      </div>
-      <div class="form-group">
-        <%= f.submit "Search" %>
-      </div>
-    <% end %>
-
-    <hr>
-    <h3>Category</h3>
-    <div class="categories">
-      <ul>
-        <li>
-          <%= link_to "New Arrival", products_path(filter: 'new'), class: (params[:filter] == 'new' ? 'active' : '') %>
-        </li>
-        <li>
-          <%= link_to "On Sale", products_path(filter: 'on_sale'), class: (params[:filter] == 'on_sale' ? 'active' : '') %>
-        </li>
-        <li>
-          <%= link_to "Recently Updated", products_path(filter: 'recently_updated'), class: (params[:filter] == 'recently_updated' ? 'active' : '') %>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div class="main-content">
-    <h2 style="font-family: 'Kosugi Maru', sans-serif; font-size: 1.8rem; font-weight: 700; margin-bottom: 30px; color: #333;">Product List</h2>
-
-    <div class="products-grid">
-      <% @products.each do |product| %>
-        <div class="product-card">
-          <%= link_to product_path(product) do %>
-            <% if product.respond_to?(:images) && product.images.attached? %>
-              <%= image_tag product.images.first, style: "width:100%;height:auto;" %>
-            <% else %>
-              <div class="no-image">No image available</div>
-            <% end %>
-          <% end %>
-          <h3>
-            <%= link_to product.name, product_path(product) %>
-          </h3>
-          <p>$<%= product.price %></p>
-        </div>
-      <% end %>
-    </div>
-
-    <div class="pagination">
-      <%= paginate @products %>
-    </div>
-  </div>
-</div>
-</body>
-</html>

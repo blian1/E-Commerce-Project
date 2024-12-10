@@ -8,5 +8,7 @@ class Category < ApplicationRecord
   end
 
   has_many :products, dependent: :nullify
-  validates :name, presence: true, uniqueness: true
+
+  # Validation
+  validates :name, presence: true, uniqueness: true, length: { maximum: 50 }, format: { with: /\A[\w\s\-]+\z/, message: "only allows letters, numbers, spaces, and hyphens" }
 end
