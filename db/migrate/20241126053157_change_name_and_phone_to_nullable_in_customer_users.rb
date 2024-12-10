@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeNameAndPhoneToNullableInCustomerUsers < ActiveRecord::Migration[7.2]
   def change
     change_column_null :customer_users, :name, true

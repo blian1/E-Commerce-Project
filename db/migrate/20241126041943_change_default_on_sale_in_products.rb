@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ChangeDefaultOnSaleInProducts < ActiveRecord::Migration[7.2]
   def change
     change_column_default :products, :on_sale, from: nil, to: true

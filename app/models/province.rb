@@ -1,6 +1,7 @@
+# frozen_string_literal: true
+
 class Province < ApplicationRecord
   has_many :customer_users
-
 
   # Validation
   validates :name, presence: true, uniqueness: true, length: { maximum: 50 }

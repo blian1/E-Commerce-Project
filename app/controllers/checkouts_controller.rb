@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CheckoutsController < ApplicationController
   before_action :initialize_cart
   before_action :authenticate_customer_user!
@@ -15,9 +17,9 @@ class CheckoutsController < ApplicationController
     @provinces = Province.all
 
     @order = Order.new(
-    customer_user_id: current_customer_user.id,
-    total_price: calculate_total_price(current_customer_user.province_id)
-  )
+      customer_user_id: current_customer_user.id,
+      total_price: calculate_total_price(current_customer_user.province_id)
+    )
   end
 
   def create
@@ -35,8 +37,8 @@ class CheckoutsController < ApplicationController
       products.each do |product|
         quantity = session[:cart][product.id.to_s].to_i
         order.order_items.create!(
-          product: product,
-          quantity: quantity,
+          product:,
+          quantity:,
           price: product.price
         )
       end
@@ -46,7 +48,7 @@ class CheckoutsController < ApplicationController
       redirect_to order_path(order)
     end
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
-    flash[:alert] = "There was an error processing your order: #{e.message}"
+    flash.now[:alert] = "There was an error processing your order: #{e.message}"
     render :new
   end
 
@@ -59,7 +61,7 @@ class CheckoutsController < ApplicationController
         hst: province.hst
       }
     else
-      render json: { error: "Province not found" }, status: :not_found
+      render json: { error: 'Province not found' }, status: :not_found
     end
   end
 

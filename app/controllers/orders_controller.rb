@@ -1,10 +1,11 @@
+# frozen_string_literal: true
+
 class OrdersController < ApplicationController
-  before_action :set_order, only: [ :show ]
+  before_action :set_order, only: [:show]
 
   def show
     @order = Order.find(params[:id])
     @subtotal = @order.order_items.sum { |item| item.price * item.quantity }
-
 
     province = Province.find(@order.customer_user.province_id)
     @gst = (@subtotal * province.gst).round(2)
@@ -19,6 +20,6 @@ class OrdersController < ApplicationController
   def set_order
     @order = Order.find(params[:id])
   rescue ActiveRecord::RecordNotFound
-    redirect_to root_path, alert: "Order not found."
+    redirect_to root_path, alert: 'Order not found.'
   end
 end

@@ -1,14 +1,16 @@
+# frozen_string_literal: true
+
 class Order < ApplicationRecord
   belongs_to :customer_user
   has_many :order_items, dependent: :destroy
-  STATUSES = %w[unpaid paid shipped completed]
+  STATUSES = %w[unpaid paid shipped completed].freeze
   validates :status, inclusion: { in: STATUSES }
 
-  def self.ransackable_associations(auth_object = nil)
+  def self.ransackable_associations(_auth_object = nil)
     %w[customer_user order_items]
   end
 
-  def self.ransackable_attributes(auth_object = nil)
+  def self.ransackable_attributes(_auth_object = nil)
     %w[status total_price created_at updated_at]
   end
 
@@ -33,6 +35,6 @@ class Order < ApplicationRecord
   end
 
   # Validation
-  validates :status, presence: true, inclusion: { in: STATUSES, message: "%{value} is not a valid status" }
+  validates :status, presence: true, inclusion: { in: STATUSES, message: '%<value>s is not a valid status' }
   validates :total_price, presence: true, numericality: { greater_than_or_equal_to: 0 }
 end

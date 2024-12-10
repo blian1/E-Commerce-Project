@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Category do
   permit_params :name
 
@@ -10,7 +12,7 @@ ActiveAdmin.register Category do
   end
 
   form do |f|
-    f.inputs "Category Details" do
+    f.inputs 'Category Details' do
       f.input :name
     end
     f.actions
@@ -23,13 +25,13 @@ ActiveAdmin.register Category do
       row :updated_at
     end
 
-    panel "Products in this Category" do
+    panel 'Products in this Category' do
       table_for category.products do
         column :name
         column :price
         column :stock_quantity
         column :actions do |product|
-          link_to "View Product", admin_product_path(product)
+          link_to 'View Product', admin_product_path(product)
         end
       end
     end

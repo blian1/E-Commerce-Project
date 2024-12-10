@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ActiveAdmin.register Product do
   permit_params :name, :description, :price, :stock_quantity, :category_id, images: [], remove_images: []
 
@@ -18,30 +20,32 @@ ActiveAdmin.register Product do
     column :stock_quantity
     column :category
     column :on_sale do |product|
-      product.on_sale ? "YES" : "NO"
+      product.on_sale ? 'YES' : 'NO'
     end
     actions
   end
 
   form do |f|
-    f.inputs "Product Details" do
+    f.inputs 'Product Details' do
       f.input :name
       f.input :description
       f.input :price
       f.input :stock_quantity
-      f.input :category, as: :select, collection: Category.all.map { |c| [ c.name, c.id ] }, include_blank: "Select a Category"
-      f.input :on_sale, as: :boolean, label: "On Sale"
+      f.input :category, as: :select, collection: Category.all.map { |c|
+        [c.name, c.id]
+      }, include_blank: 'Select a Category'
+      f.input :on_sale, as: :boolean, label: 'On Sale'
     end
 
     # Display existing images
     if f.object.images.attached?
-      panel "Existing Images" do
+      panel 'Existing Images' do
         ul do
           f.object.images.each_with_index do |img, index|
             li do
               # Display the image
               div do
-                image_tag url_for(img), size: "250x250", style: "margin-bottom: 10px;"
+                image_tag url_for(img), size: '250x250', style: 'margin-bottom: 10px;'
               end
 
               # Generate a unique checkbox and label for each image
@@ -50,9 +54,9 @@ ActiveAdmin.register Product do
 
                 # Directly join HTML, ensuring each div is independent
                 safe_join([
-                  check_box_tag("product[remove_images][]", img.id, false, id: check_box_id),
-                  label_tag(check_box_id, "Remove this image")
-                ])
+                            check_box_tag('product[remove_images][]', img.id, false, id: check_box_id),
+                            label_tag(check_box_id, 'Remove this image')
+                          ])
               end
             end
           end
@@ -61,7 +65,7 @@ ActiveAdmin.register Product do
     end
 
     # Upload new images
-    f.inputs "Add New Images" do
+    f.inputs 'Add New Images' do
       f.input :images, as: :file, input_html: { multiple: true }
     end
 
@@ -78,10 +82,10 @@ ActiveAdmin.register Product do
       row :images do |product|
         if product.images.attached?
           product.images.map do |img|
-            image_tag url_for(img), size: "300x300"
-          end.join(" ").html_safe
+            image_tag url_for(img), size: '300x300'
+          end.join(' ').html_safe
         else
-          "No images uploaded"
+          'No images uploaded'
         end
       end
     end
