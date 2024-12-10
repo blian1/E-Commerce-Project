@@ -51,7 +51,7 @@ Rails.application.routes.draw do
   end
 
 
-  resources :orders, only: [ :show ]
+  resources :orders, only: [ :show, :index ]
 
   resources :checkouts, only: [ :new, :create ] do
     collection do
@@ -59,9 +59,14 @@ Rails.application.routes.draw do
     end
   end
 
-
-
-
+  resources :orders do
+    resources :payments, only: [ :create ] do
+      collection do
+        get :success
+        get :cancel
+      end
+    end
+  end
 
 
 

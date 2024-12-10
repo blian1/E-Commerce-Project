@@ -13,6 +13,11 @@ class CheckoutsController < ApplicationController
     @cart_items = session[:cart] || {}
     @products = Product.where(id: @cart_items.keys)
     @provinces = Province.all
+
+    @order = Order.new(
+    customer_user_id: current_customer_user.id,
+    total_price: calculate_total_price(current_customer_user.province_id)
+  )
   end
 
   def create
@@ -38,7 +43,7 @@ class CheckoutsController < ApplicationController
 
       session[:cart] = {}
 
-      redirect_to order_path(order), notice: "Order successfully placed!"
+      redirect_to order_path(order)
     end
   rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotFound => e
     flash[:alert] = "There was an error processing your order: #{e.message}"

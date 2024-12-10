@@ -11,6 +11,7 @@ class OrdersController < ApplicationController
     @pst = (@subtotal * province.pst).round(2)
     @hst = (@subtotal * province.hst).round(2)
     @total_price = (@subtotal + @gst + @pst + @hst).round(2)
+    @order_items = @order.order_items.includes(:product)
   end
 
   private

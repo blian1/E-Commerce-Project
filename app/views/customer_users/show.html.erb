@@ -272,7 +272,7 @@
                           <span class="ms-3 text-nowrap d-inline-block">Amount：$<%= order.total_price %></span>
                         </td>
                         <td>
-                          <%= link_to "Check Details", order_path(order), class: "btn btn-outline-secondary text-nowrap btn-sm" %>
+                          <%= link_to "Check Details", order_path(order), data: { turbo: false }, class: "btn btn-outline-secondary text-nowrap btn-sm" %>
                         </td>
                       </tr>
                     <% end %>

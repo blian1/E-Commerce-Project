@@ -1,4 +1,5 @@
 <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+ <meta name="turbo-visit-control" content="reload">
 
 <div class="order-details-container">
   <h1 class="text-center">Order Details</h1>
@@ -44,11 +45,20 @@
     <p><strong>Total Price:</strong> $<%= @total_price %></p>
     <p><strong>Address:</strong> <%= @order.customer_user.address %></p>
     <p><strong>Phone:</strong> <%= @order.customer_user.phone_number %></p>
+    <p><strong>Status:</strong> <%= @order.status %></p>
+    <p><strong>Paypal:</strong> <%= @order.paypal_order_id %></p>
   </div>
 
   <div class="text-center mt-4">
-    <%= link_to "Back to Home", root_path, class: "btn btn-primary rounded-pill px-4 py-2" %>
+    <% if @order.status == "unpaid" %>
+      <div id="paypal-button-container" data-order-id="<%= @order.id %>"></div>
+      <p class="text-muted mt-2">Please complete your payment using PayPal.</p>
+    <% else %>
+      <p class="text-success">This order has already been paid. Thank you!</p>
+    <% end %>
+    <%= link_to "Back to Home", root_path, class: "btn btn-primary rounded-pill px-4 py-2 mt-3" %>
   </div>
+
 </div>
 
 <style>
@@ -115,5 +125,65 @@
     border-radius: 50px;
   }
 </style>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", initializePayPalButtons);
+  function initializePayPalButtons() {
+    const paypalButtonContainer = document.getElementById("paypal-button-container");
+    if (!paypalButtonContainer) {
+      console.log("PayPal button container not found, skipping initialization.");
+      return;
+    }
+
+    const orderId = paypalButtonContainer.dataset.orderId;
+    if (!orderId) {
+      console.error("Order ID is missing. Cannot initialize PayPal Buttons.");
+      return;
+    }
+
+    console.log("Initializing PayPal Buttons for Order ID:", orderId);
+
+    paypal.Buttons({
+      createOrder: (data, actions) => {
+        return fetch(`/orders/${orderId}/payments`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "X-CSRF-Token": document.querySelector("meta[name='csrf-token']").content
+          }
+        }).then(response => {
+          if (!response.ok) {
+            throw new Error("Failed to create PayPal order.");
+          }
+          return response.json();
+        }).then(data => {
+          return data.paypal_order_id;
+        });
+      },
+      onApprove: (data, actions) => {
+        return fetch(`/orders/${orderId}/payments/success?order_id=${orderId}`, {
+          method: "GET"
+        }).then(response => {
+          if (response.ok) {
+            window.location.href = `/orders/${orderId}`;
+          } else {
+            alert("Payment capture failed. Please try again.");
+          }
+        });
+      },
+      onCancel: (data) => {
+        alert("Payment was cancelled.");
+        window.location.href = "/checkouts";
+      },
+      onError: (err) => {
+        console.error("PayPal Error: ", err);
+        alert("An error occurred during the payment process.");
+      }
+    }).render("#paypal-button-container");
+  }
+
+</script>
+
 
 
