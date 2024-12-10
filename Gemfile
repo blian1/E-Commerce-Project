@@ -17,6 +17,9 @@ gem "sassc-rails", "~> 2.1"
 
 gem "kaminari"
 
+gem "paypal-checkout-sdk"
+
+
 
 
 gem "puma", ">= 5.0"

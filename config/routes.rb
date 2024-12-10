@@ -1,4 +1,6 @@
 Rails.application.routes.draw do
+  get "payments/new"
+  get "payments/create"
   devise_for :customer_users, controllers: { registrations: "customer_users/registrations" }
   get "products/index"
   get "pages/show"
